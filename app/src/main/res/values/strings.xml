@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WalkingNavigator</string>
+    <string name="des">Destination</string>
+    <string name="route">Route</string>
+</resources>
