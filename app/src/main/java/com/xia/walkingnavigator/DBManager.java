@@ -3,6 +3,7 @@ package com.xia.walkingnavigator;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 /**
  * Created by Xia on 11/7/2016.
+ * provide interfaces to manage the DB
  */
 
 public class DBManager {
@@ -22,9 +24,13 @@ public class DBManager {
 
     private DBManager(Context context) {
         helper = new DBHelper(context);
-        //因为getWritableDatabase内部调用了mContext.openOrCreateDatabase(mName, 0, mFactory);
-        //所以要确保context已初始化,我们可以把实例化DBManager的步骤放在Activity的onCreate里
-        db = helper.getWritableDatabase();
+        db = helper.getReadableDatabase();
+
+/*        Cursor c=db.rawQuery("SELECT * FROM room",null);
+        while (c.moveToNext()) {
+            Log.d("DBManager",c.getString(c.getColumnIndex("name")));
+        }
+        c.close();*/
     }
 
     public static DBManager getDBManager(Context context){
@@ -42,6 +48,18 @@ public class DBManager {
         }
         c.close();
         return rooms;
+    }
+
+    public List<HallWay> queryHallway(){
+        ArrayList<HallWay> hallWays=new ArrayList<>();
+        Cursor c=db.rawQuery("SELECT * FROM hallway",null);
+        while(c.moveToNext()){
+            HallWay hallWay=new HallWay(c.getInt(c.getColumnIndex("_id")),c.getString(c.getColumnIndex("direction")),new Location(c.getInt(c.getColumnIndex("start_x")),c.getInt(c.getColumnIndex("start_y"))),new Location(c.getInt(c.getColumnIndex("end_x")),c.getInt(c.getColumnIndex("end_y"))));
+            hallWays.add(hallWay);
+        }
+        c.close();
+
+        return hallWays;
     }
 
     public List<Office> queryOffice() {
@@ -71,15 +89,49 @@ public class DBManager {
         return labs;
     }
 
-    public Map<Integer, Integer> queryRoom_HW_Adj() {
+    public List<Location> queryAdj(int id1,int id2){
+        if(id1>id2){
+            int tmp=id1;
+            id1=id2;
+            id2=tmp;
+        }
+
+        ArrayList<Location> points = new ArrayList<>();
+        Cursor c = db.rawQuery("SELECT * FROM room_hw_adj WHERE room_id="+id1+" AND hw_id="+id2, null);
+        while(c!=null&&c.moveToNext()){
+            Location point=new Location(c.getInt(c.getColumnIndex("x")),c.getInt(c.getColumnIndex("y")));
+            points.add(point);
+        }
+
+        c = db.rawQuery("SELECT * FROM hw_adj WHERE hw_id1="+id1+" AND hw_id2="+id2, null);
+        while(c!=null&&c.moveToNext()){
+            Location point=new Location(c.getInt(c.getColumnIndex("x")),c.getInt(c.getColumnIndex("y")));
+            points.add(point);
+        }
+
+        return points;
+    }
+
+    public List<Adjacent> queryRoom_HW_Adj() {
+        ArrayList<Adjacent> room_hw_adj=new ArrayList<>();
         Cursor c = db.rawQuery("SELECT * FROM room_hw_adj", null);
-        Map<Integer,Integer> map=new HashMap<>();
         while (c.moveToNext()) {
-            Lab lab = new Lab(c.getInt(c.getColumnIndex("_id")),new Location(c.getInt(c.getColumnIndex("x")),c.getInt(c.getColumnIndex("y"))),c.getString(c.getColumnIndex("name")));
-            map.put(c.getInt(c.getColumnIndex("room_id")),c.getInt(c.getColumnIndex("hw_id")));
+            Adjacent adjacent=new Adjacent(c.getInt(c.getColumnIndex("room_id")),c.getInt(c.getColumnIndex("hw_id")),new Location(c.getInt(c.getColumnIndex("x")),c.getInt(c.getColumnIndex("y"))));
+            room_hw_adj.add(adjacent);
         }
         c.close();
-        return map;
+        return room_hw_adj;
+    }
+
+    public List<Adjacent> queryHW_Adj(){
+        ArrayList<Adjacent> hw_adj=new ArrayList<>();
+        Cursor c = db.rawQuery("SELECT * FROM hw_adj", null);
+        while (c.moveToNext()) {
+            Adjacent adjacent=new Adjacent(c.getInt(c.getColumnIndex("hw_id1")),c.getInt(c.getColumnIndex("hw_id2")),new Location(c.getInt(c.getColumnIndex("x")),c.getInt(c.getColumnIndex("y"))));
+            hw_adj.add(adjacent);
+        }
+        c.close();
+        return hw_adj;
     }
 
     public Cursor queryTheCursor() {

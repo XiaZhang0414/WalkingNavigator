@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -51,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean countingFlag=true;
 
     private DBManager mgr;
+
+    private int source;
+    private int dest;
+    private MapGraph mapGraph;
 
     /**********
      * 1. initialize components
@@ -97,26 +102,41 @@ public class MainActivity extends AppCompatActivity {
 
         //builde DB
         mgr = DBManager.getDBManager(this);
+        mapGraph=new MapGraph(mgr);
+        mapGraph.buildGraph();
+        source=3;
 
         //set drop down list
         List<String> roomNo = new ArrayList<>();
-        for (Room s : mgr.queryRoom())
+        final List<Room> roomList=mgr.queryRoom();
+        for (Room s : roomList)
             roomNo.add(s.name);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, roomNo);
         rooms.setAdapter(adapter);
+        rooms.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                dest=roomList.get(i).id;
+            }
 
-        imageView.setCurrentLocation(new Location(93, 120));
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        imageView.setCurrentLocation(new Location(93, 120)); //the curent location
         imageView.invalidate();
     }
 
     public void getRoute(View view) {
-        imageView.setCurrentLocation(new Location(93, 120));
-        Location[] path=new Location[4];
+//        imageView.setCurrentLocation(new Location(93, 120));
+        /*Location[] path=new Location[4];
         path[0]=new Location(93,120);
         path[1]=new Location(130,120);
         path[2]=new Location(130,22);
-        path[3]=new Location(63,22);
-        imageView.setPath(path);
+        path[3]=new Location(63,22);*/
+        imageView.setPath(mapGraph.getPath(source,dest));
         imageView.invalidate();
     }
 
