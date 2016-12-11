@@ -11,36 +11,6 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.xia.walkingnavigator.MainActivity">
 
-<!--    <TextView
-        android:text="Steps you have taken"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="29dp"
-        android:textSize="20sp"
-        android:id="@+id/textView" />-->
-
-<!--    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=" "
-        android:layout_centerVertical="true"
-        android:textSize="20sp"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView" />-->
-
-<!--    <TextView
-        android:text=""
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_marginBottom="21dp"
-        android:textSize="20sp"
-        android:id="@+id/direction" />-->
     <TextView
         android:text="@string/des"
         android:id="@+id/des"
@@ -68,20 +38,31 @@
         android:layout_centerHorizontal="true"
         android:onClick="getRoute"/>
 
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/getroute"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="33dp"
+        android:id="@+id/direction" />
+
+    <TextView
+        android:text=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/getroute"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="33dp"
+        android:id="@+id/step" />
+
     <com.xia.walkingnavigator.DrawableImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom= "true"
-        android:adjustViewBounds="true"/>
+        android:adjustViewBounds="true"
+        android:layout_alignParentBottom="true"/>
+<!--        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"-->
 
-    <!--    <Button
-            android:text="Show Office"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/text"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="41dp"
-            android:id="@+id/button"
-            android:onClick="showOffice"/>-->
 </RelativeLayout>
