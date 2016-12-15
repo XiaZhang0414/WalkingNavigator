@@ -124,15 +124,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getRoute(View view) {
-//        imageView.setCurrentLocation(new Location(93, 120));
+//        Log.d("MainActivity",source+", "+dest);
+        if(source==dest)
+            return;
         path = mapGraph.getPath(source, dest);
-        source=dest;
+//        source=dest;
         imageView.setPath(path);
         imageView.invalidate();
 
         createInstructions(path);
-        for(String s:instructions)
-            Log.d("MainActivity",s);
         instruction_idx=0;
         dir=dirs.get(instruction_idx);
         countingFlag=true;
@@ -252,8 +252,10 @@ public class MainActivity extends AppCompatActivity {
                     mStep=0;
                     mStepView.setText(Integer.toString(mStep));
 
-                    if(instruction_idx==instructions.size()-1)
-                        countingFlag=false;
+                    if(instruction_idx==instructions.size()-1) {
+                        countingFlag = false;
+                        source=dest; //after reaching the destination, the destination will become the source
+                    }
                 }
             }
         }
